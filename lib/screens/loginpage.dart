@@ -1,13 +1,12 @@
-// ignore_for_file: library_private_types_in_public_api
-
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:cupertino_icons/cupertino_icons.dart';
 import 'package:portfolioapp/services/auth_service.dart';
 import 'homepage.dart';
+import 'signuppage.dart';
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
-
   @override
   _LoginPageState createState() => _LoginPageState();
 }
@@ -17,7 +16,12 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _passwordController = TextEditingController();
   final AuthService _authService = AuthService();
 
+  bool _isLoading = false;
+
   Future<void> _login() async {
+    setState(() {
+      _isLoading = true;
+    });
     try {
       User? user = await _authService.signInWithEmailPassword(
         _emailController.text,
@@ -33,6 +37,10 @@ class _LoginPageState extends State<LoginPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Failed to sign in: $e')),
       );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -53,13 +61,32 @@ class _LoginPageState extends State<LoginPage> {
             ),
             TextField(
               controller: _passwordController,
-              decoration: InputDecoration(labelText: 'Password'),
               obscureText: true,
+              decoration: InputDecoration(labelText: 'Password'),
             ),
             SizedBox(height: 20),
             ElevatedButton(
-              onPressed: _login,
-              child: Text('Login'),
+              onPressed: _isLoading ? null : _login,
+              child: _isLoading
+                  ? Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        CupertinoActivityIndicator(),
+                        SizedBox(width: 10),
+                        Text('Logging In...'),
+                      ],
+                    )
+                  : Text('Login'),
+            ),
+            SizedBox(height: 20),
+            TextButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SignUpPage()),
+                );
+              },
+              child: Text('Don\'t have an account? Sign Up'),
             ),
           ],
         ),
