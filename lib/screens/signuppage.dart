@@ -1,9 +1,7 @@
+import 'package:flutter/material.dart';
+import 'package:portfolioapp/services/auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:cupertino_icons/cupertino_icons.dart';
-import 'package:portfolioapp/services/auth_service.dart';
-import 'homepage.dart';
 
 class SignUpPage extends StatefulWidget {
   @override
@@ -17,31 +15,30 @@ class _SignUpPageState extends State<SignUpPage> {
       TextEditingController();
   final AuthService _authService = AuthService();
 
-  bool _isPasswordVisible = false;
-  bool _isConfirmPasswordVisible = false;
   bool _isLoading = false;
+  bool _passwordVisible = false;
 
   Future<void> _signUp() async {
+    setState(() {
+      _isLoading = true;
+    });
     if (_passwordController.text != _confirmPasswordController.text) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Passwords do not match')),
       );
+      setState(() {
+        _isLoading = false;
+      });
       return;
     }
 
-    setState(() {
-      _isLoading = true;
-    });
     try {
       User? user = await _authService.signUpWithEmailPassword(
         _emailController.text,
         _passwordController.text,
       );
       if (user != null) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => HomePage()),
-        );
+        Navigator.pushReplacementNamed(context, '/home');
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -71,18 +68,16 @@ class _SignUpPageState extends State<SignUpPage> {
             ),
             TextField(
               controller: _passwordController,
-              obscureText: !_isPasswordVisible,
+              obscureText: !_passwordVisible,
               decoration: InputDecoration(
                 labelText: 'Password',
                 suffixIcon: IconButton(
                   icon: Icon(
-                    _isPasswordVisible
-                        ? Icons.visibility
-                        : Icons.visibility_off,
+                    _passwordVisible ? Icons.visibility : Icons.visibility_off,
                   ),
                   onPressed: () {
                     setState(() {
-                      _isPasswordVisible = !_isPasswordVisible;
+                      _passwordVisible = !_passwordVisible;
                     });
                   },
                 ),
@@ -90,18 +85,16 @@ class _SignUpPageState extends State<SignUpPage> {
             ),
             TextField(
               controller: _confirmPasswordController,
-              obscureText: !_isConfirmPasswordVisible,
+              obscureText: !_passwordVisible,
               decoration: InputDecoration(
                 labelText: 'Confirm Password',
                 suffixIcon: IconButton(
                   icon: Icon(
-                    _isConfirmPasswordVisible
-                        ? Icons.visibility
-                        : Icons.visibility_off,
+                    _passwordVisible ? Icons.visibility : Icons.visibility_off,
                   ),
                   onPressed: () {
                     setState(() {
-                      _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
+                      _passwordVisible = !_passwordVisible;
                     });
                   },
                 ),

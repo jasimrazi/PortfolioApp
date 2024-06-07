@@ -1,10 +1,7 @@
+import 'package:flutter/material.dart';
+import 'package:portfolioapp/services/auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
-import 'package:cupertino_icons/cupertino_icons.dart';
-import 'package:portfolioapp/services/auth_service.dart';
-import 'homepage.dart';
-import 'signuppage.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -28,10 +25,7 @@ class _LoginPageState extends State<LoginPage> {
         _passwordController.text,
       );
       if (user != null) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => HomePage()),
-        );
+        Navigator.pushReplacementNamed(context, '/home');
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -81,10 +75,7 @@ class _LoginPageState extends State<LoginPage> {
             SizedBox(height: 20),
             TextButton(
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => SignUpPage()),
-                );
+                Navigator.pushNamed(context, '/signup');
               },
               child: Text('Don\'t have an account? Sign Up'),
             ),
