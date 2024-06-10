@@ -38,7 +38,7 @@ class _SignUpPageState extends State<SignUpPage> {
         _passwordController.text,
       );
       if (user != null) {
-        Navigator.pushReplacementNamed(context, '/home');
+        Navigator.pushReplacementNamed(context, '/userinfo');
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
