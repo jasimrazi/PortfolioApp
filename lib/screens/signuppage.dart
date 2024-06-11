@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:portfolioapp/services/auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:portfolioapp/widgets/custombutton.dart';
+import 'package:portfolioapp/widgets/normal_textfield.dart';
 
 class SignUpPage extends StatefulWidget {
   @override
@@ -62,58 +64,44 @@ class _SignUpPageState extends State<SignUpPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            TextField(
+            buildNormalTextField(
               controller: _emailController,
-              decoration: InputDecoration(labelText: 'Email'),
+              hintText: 'Email',
             ),
-            TextField(
+            SizedBox(height: 20),
+            buildNormalTextField(
               controller: _passwordController,
+              hintText: 'Password',
               obscureText: !_passwordVisible,
-              decoration: InputDecoration(
-                labelText: 'Password',
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _passwordVisible ? Icons.visibility : Icons.visibility_off,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      _passwordVisible = !_passwordVisible;
-                    });
-                  },
+              suffixIcon: IconButton(
+                icon: Icon(
+                  _passwordVisible ? Icons.visibility : Icons.visibility_off,
                 ),
-              ),
-            ),
-            TextField(
-              controller: _confirmPasswordController,
-              obscureText: !_passwordVisible,
-              decoration: InputDecoration(
-                labelText: 'Confirm Password',
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _passwordVisible ? Icons.visibility : Icons.visibility_off,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      _passwordVisible = !_passwordVisible;
-                    });
-                  },
-                ),
+                onPressed: () {
+                  setState(() {
+                    _passwordVisible = !_passwordVisible;
+                  });
+                },
               ),
             ),
             SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _isLoading ? null : _signUp,
-              child: _isLoading
-                  ? Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        CupertinoActivityIndicator(),
-                        SizedBox(width: 10),
-                        Text('Signing Up...'),
-                      ],
-                    )
-                  : Text('Sign Up'),
+            buildNormalTextField(
+              controller: _confirmPasswordController,
+              hintText: 'Confirm Password',
+              obscureText: !_passwordVisible,
+              suffixIcon: IconButton(
+                icon: Icon(
+                  _passwordVisible ? Icons.visibility : Icons.visibility_off,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _passwordVisible = !_passwordVisible;
+                  });
+                },
+              ),
             ),
+            SizedBox(height: 20),
+            CustomButton(isLoading: _isLoading, text: 'Sign Up')
           ],
         ),
       ),

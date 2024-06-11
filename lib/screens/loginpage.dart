@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:portfolioapp/services/auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:portfolioapp/widgets/custombutton.dart';
+import 'package:portfolioapp/widgets/normal_textfield.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -49,35 +51,31 @@ class _LoginPageState extends State<LoginPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            TextField(
+            buildNormalTextField(
               controller: _emailController,
-              decoration: InputDecoration(labelText: 'Email'),
-            ),
-            TextField(
-              controller: _passwordController,
-              obscureText: true,
-              decoration: InputDecoration(labelText: 'Password'),
+              hintText: 'Email',
             ),
             SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _isLoading ? null : _login,
-              child: _isLoading
-                  ? Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        CupertinoActivityIndicator(),
-                        SizedBox(width: 10),
-                        Text('Logging In...'),
-                      ],
-                    )
-                  : Text('Login'),
+            buildNormalTextField(
+              controller: _passwordController,
+              hintText: 'Password',
+              obscureText: true,
+            ),
+            SizedBox(height: 20),
+            CustomButton(
+              isLoading: _isLoading,
+              text: 'Login',
+              onTap: _login,
             ),
             SizedBox(height: 20),
             TextButton(
               onPressed: () {
                 Navigator.pushNamed(context, '/signup');
               },
-              child: Text('Don\'t have an account? Sign Up'),
+              child: Text(
+                'Don\'t have an account? Sign Up',
+                style: TextStyle(color: Colors.grey),
+              ),
             ),
           ],
         ),

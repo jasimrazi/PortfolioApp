@@ -5,6 +5,7 @@ import 'package:portfolioapp/screens/homepage.dart';
 import 'package:portfolioapp/screens/loginpage.dart';
 import 'package:portfolioapp/screens/signuppage.dart';
 import 'package:portfolioapp/screens/userinfo.dart';
+import 'package:portfolioapp/utilities/theme.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -23,10 +24,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Portfolio App',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
-      ),
+      theme: appTheme,
       initialRoute:
           FirebaseAuth.instance.currentUser == null ? '/login' : '/home',
       routes: {
