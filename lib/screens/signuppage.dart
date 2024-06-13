@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:portfolioapp/services/auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:portfolioapp/widgets/custom_appbar.dart';
 import 'package:portfolioapp/widgets/custom_button.dart';
 import 'package:portfolioapp/widgets/normal_textfield.dart';
 
@@ -56,9 +57,7 @@ class _SignUpPageState extends State<SignUpPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Sign Up Page'),
-      ),
+      appBar: CustomAppBar(title: 'Sign Up Page'),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

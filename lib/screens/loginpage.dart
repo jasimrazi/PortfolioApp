@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:portfolioapp/services/auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:portfolioapp/widgets/custom_appbar.dart';
 import 'package:portfolioapp/widgets/custom_button.dart';
 import 'package:portfolioapp/widgets/custom_textbutton.dart';
 import 'package:portfolioapp/widgets/normal_textfield.dart';
@@ -44,9 +45,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Login Page'),
-      ),
+      appBar: CustomAppBar(title: 'Login Page'),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

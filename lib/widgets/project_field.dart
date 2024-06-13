@@ -32,7 +32,10 @@ class ProjectField extends StatelessWidget {
           labelText: 'Project URL',
         ),
         IconButton(
-          icon: Icon(Icons.remove_circle),
+          icon: Icon(
+            Icons.remove_circle,
+            color: Colors.red,
+          ),
           onPressed: onRemove,
         ),
       ],

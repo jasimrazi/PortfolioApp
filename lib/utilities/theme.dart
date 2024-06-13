@@ -6,6 +6,7 @@ final ThemeData appTheme = ThemeData(
   fontFamily: GoogleFonts.rethinkSans().fontFamily,
   scaffoldBackgroundColor: const Color(0xfffafbfb),
   useMaterial3: true,
+  
   textTheme: const TextTheme(
     bodyLarge: TextStyle(color: Colors.black),
     bodyMedium: TextStyle(color: Colors.black),

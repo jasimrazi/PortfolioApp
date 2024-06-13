@@ -9,10 +9,11 @@ Widget buildTextField({
   VoidCallback? onPressed,
 }) {
   return Container(
+    margin: EdgeInsets.symmetric(vertical: 5),
     decoration: BoxDecoration(
-      color: Colors.white,
+      color: Colors.grey.shade50,
       borderRadius: BorderRadius.circular(15.0),
-      border: Border.all(color: Colors.grey),
+      border: Border.all(color: Colors.grey.shade200),
     ),
     child: TextField(
       cursorColor: Colors.grey,

@@ -21,7 +21,10 @@ class SocialMediaField extends StatelessWidget {
           ),
         ),
         IconButton(
-          icon: Icon(Icons.remove_circle),
+          icon: Icon(
+            Icons.remove_circle,
+            color: Colors.red,
+          ),
           onPressed: onRemove,
         ),
       ],

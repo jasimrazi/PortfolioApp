@@ -3,19 +3,34 @@ import 'package:flutter/material.dart';
 class CustomTextButton extends StatelessWidget {
   final String text;
   final VoidCallback onTap;
+  final IconData? icon;
 
   const CustomTextButton({
     required this.text,
     required this.onTap,
+    this.icon,
   });
 
   @override
   Widget build(BuildContext context) {
     return TextButton(
       onPressed: onTap,
-      child: Text(
-        text,
-        style: TextStyle(color: Colors.grey),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            text,
+            style: TextStyle(color: Colors.grey),
+          ),
+          SizedBox(
+            width: 5,
+          ),
+          Icon(
+            icon,
+            color: Colors.lightGreen,
+            size: 20,
+          )
+        ],
       ),
       style: ButtonStyle(
         overlayColor: MaterialStateProperty.resolveWith<Color>(

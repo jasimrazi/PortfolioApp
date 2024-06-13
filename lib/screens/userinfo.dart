@@ -5,11 +5,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:portfolioapp/widgets/custom_appbar.dart';
 import 'package:portfolioapp/widgets/custom_button.dart';
 import 'package:portfolioapp/widgets/custom_textbutton.dart';
 import 'package:portfolioapp/widgets/social_media_field.dart';
 import 'package:portfolioapp/widgets/project_field.dart';
 import 'package:portfolioapp/widgets/textfield.dart';
+import 'package:portfolioapp/widgets/section_container.dart';
 
 class UserInfoPage extends StatefulWidget {
   @override
@@ -100,12 +102,11 @@ class _UserInfoPageState extends State<UserInfoPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Complete Your Profile'),
-      ),
+      appBar: CustomAppBar(title: 'Complete your profile'),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
+          physics: BouncingScrollPhysics(),
           child: Column(
             children: [
               GestureDetector(
@@ -121,62 +122,100 @@ class _UserInfoPageState extends State<UserInfoPage> {
                       : null,
                 ),
               ),
-              buildTextField(controller: _nameController, labelText: 'Name'),
-              buildTextField(
-                  controller: _urlController, labelText: 'Custom URL'),
-              buildTextField(
-                controller: _aboutMeController,
-                labelText: 'About Me',
-                maxLines: 5,
+              SizedBox(height: 20),
+              SectionContainer(
+                title: 'Personal Information',
+                icon: Icons.info_outline,
+                child: Column(
+                  children: [
+                    buildTextField(
+                        controller: _nameController, labelText: 'Name'),
+                    buildTextField(
+                        controller: _urlController, labelText: 'Custom URL'),
+                    buildTextField(
+                      controller: _aboutMeController,
+                      labelText: 'About Me',
+                      maxLines: 5,
+                    ),
+                  ],
+                ),
               ),
-              ..._socialMediaControllers.asMap().entries.map((entry) {
-                return SocialMediaField(
-                  controller: entry.value,
-                  onRemove: () {
-                    setState(() {
-                      _socialMediaControllers.removeAt(entry.key);
-                    });
-                  },
-                );
-              }).toList(),
-              CustomTextButton(
-                text: 'Add Social Media Link',
-                onTap: () {
-                  setState(() {
-                    _socialMediaControllers.add(TextEditingController());
-                  });
-                },
+              SectionContainer(
+                title: 'Social Media',
+                icon: Icons.public_outlined,
+                child: Column(
+                  children: [
+                    ..._socialMediaControllers.asMap().entries.map((entry) {
+                      return SocialMediaField(
+                        controller: entry.value,
+                        onRemove: () {
+                          setState(() {
+                            _socialMediaControllers.removeAt(entry.key);
+                          });
+                        },
+                      );
+                    }).toList(),
+                    Divider(
+                      indent: 10,
+                      endIndent: 10,
+                      color: Colors.grey.shade200,
+                    ),
+                    CustomTextButton(
+                      text: 'Add Social Media Link',
+                      icon: Icons.add_circle_outline,
+                      onTap: () {
+                        setState(() {
+                          _socialMediaControllers.add(TextEditingController());
+                        });
+                      },
+                    ),
+                  ],
+                ),
               ),
-              ..._projectControllers.asMap().entries.map((entry) {
-                return ProjectField(
-                  titleController: entry.value['title']!,
-                  descriptionController: entry.value['description']!,
-                  urlController: entry.value['url']!,
-                  onRemove: () {
-                    setState(() {
-                      _projectControllers.removeAt(entry.key);
-                    });
-                  },
-                );
-              }).toList(),
-              CustomTextButton(
-                text: 'Add Project',
-                onTap: () {
-                  setState(() {
-                    _projectControllers.add({
-                      'title': TextEditingController(),
-                      'description': TextEditingController(),
-                      'url': TextEditingController(),
-                    });
-                  });
-                },
+              SectionContainer(
+                title: 'Projects',
+                icon: Icons.work_outline,
+                child: Column(
+                  children: [
+                    ..._projectControllers.asMap().entries.map((entry) {
+                      return ProjectField(
+                        titleController: entry.value['title']!,
+                        descriptionController: entry.value['description']!,
+                        urlController: entry.value['url']!,
+                        onRemove: () {
+                          setState(() {
+                            _projectControllers.removeAt(entry.key);
+                          });
+                        },
+                      );
+                    }).toList(),
+                    Divider(
+                      indent: 10,
+                      endIndent: 10,
+                      color: Colors.grey.shade200,
+                    ),
+                    CustomTextButton(
+                      text: 'Add Project',
+                      icon: Icons.add_circle_outline,
+                      onTap: () {
+                        setState(() {
+                          _projectControllers.add({
+                            'title': TextEditingController(),
+                            'description': TextEditingController(),
+                            'url': TextEditingController(),
+                          });
+                        });
+                      },
+                    ),
+                  ],
+                ),
               ),
               SizedBox(height: 20),
               CustomButton(
                 isLoading: _isLoading,
                 text: 'Submit',
                 onTap: _submitData,
-              )
+              ),
             ],
           ),
         ),
