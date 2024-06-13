@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:portfolioapp/services/auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:portfolioapp/widgets/custombutton.dart';
+import 'package:portfolioapp/widgets/custom_button.dart';
+import 'package:portfolioapp/widgets/custom_textbutton.dart';
 import 'package:portfolioapp/widgets/normal_textfield.dart';
 
 class LoginPage extends StatefulWidget {
@@ -68,15 +69,10 @@ class _LoginPageState extends State<LoginPage> {
               onTap: _login,
             ),
             SizedBox(height: 20),
-            TextButton(
-              onPressed: () {
+            CustomTextButton(text: 'Don\'t have an account? Sign Up', onTap: () {
                 Navigator.pushNamed(context, '/signup');
               },
-              child: Text(
-                'Don\'t have an account? Sign Up',
-                style: TextStyle(color: Colors.grey),
-              ),
-            ),
+            )
           ],
         ),
       ),

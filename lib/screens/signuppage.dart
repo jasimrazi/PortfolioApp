@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:portfolioapp/services/auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:portfolioapp/widgets/custombutton.dart';
+import 'package:portfolioapp/widgets/custom_button.dart';
 import 'package:portfolioapp/widgets/normal_textfield.dart';
 
 class SignUpPage extends StatefulWidget {
@@ -101,7 +101,7 @@ class _SignUpPageState extends State<SignUpPage> {
               ),
             ),
             SizedBox(height: 20),
-            CustomButton(isLoading: _isLoading, text: 'Sign Up')
+            CustomButton(isLoading: _isLoading, text: 'Sign Up' ,onTap: _signUp,)
           ],
         ),
       ),

@@ -5,6 +5,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:portfolioapp/widgets/custom_button.dart';
+import 'package:portfolioapp/widgets/custom_textbutton.dart';
+import 'package:portfolioapp/widgets/social_media_field.dart';
+import 'package:portfolioapp/widgets/project_field.dart';
+import 'package:portfolioapp/widgets/textfield.dart';
 
 class UserInfoPage extends StatefulWidget {
   @override
@@ -92,69 +97,6 @@ class _UserInfoPageState extends State<UserInfoPage> {
     }
   }
 
-  Widget _buildTextField({
-    required TextEditingController controller,
-    required String labelText,
-    bool isMultiline = false,
-    int? maxLength,
-  }) {
-    return TextField(
-      controller: controller,
-      decoration: InputDecoration(labelText: labelText),
-      maxLines: isMultiline ? null : 1,
-      maxLength: maxLength,
-    );
-  }
-
-  Widget _buildSocialMediaField(int index) {
-    return Row(
-      children: [
-        Expanded(
-          child: _buildTextField(
-            controller: _socialMediaControllers[index],
-            labelText: 'Social Media URL',
-          ),
-        ),
-        IconButton(
-          icon: Icon(Icons.remove_circle),
-          onPressed: () {
-            setState(() {
-              _socialMediaControllers.removeAt(index);
-            });
-          },
-        ),
-      ],
-    );
-  }
-
-  Widget _buildProjectField(int index) {
-    return Column(
-      children: [
-        _buildTextField(
-          controller: _projectControllers[index]['title']!,
-          labelText: 'Project Title',
-        ),
-        _buildTextField(
-          controller: _projectControllers[index]['description']!,
-          labelText: 'Project Description',
-          isMultiline: true,
-        ),
-        _buildTextField(
-          controller: _projectControllers[index]['url']!,
-          labelText: 'Project URL',
-        ),
-        IconButton(
-          icon: Icon(Icons.remove_circle),
-          onPressed: () {
-            setState(() {
-              _projectControllers.removeAt(index);
-            });
-          },
-        ),
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -169,40 +111,57 @@ class _UserInfoPageState extends State<UserInfoPage> {
               GestureDetector(
                 onTap: _pickImage,
                 child: CircleAvatar(
+                  backgroundColor: Colors.grey.shade400,
                   radius: 50,
                   backgroundImage: _profileImage != null
                       ? FileImage(File(_profileImage!.path))
                       : null,
                   child: _profileImage == null
-                      ? Icon(Icons.add_a_photo, size: 50, color: Colors.grey)
+                      ? Icon(Icons.add_a_photo, size: 50, color: Colors.white)
                       : null,
                 ),
               ),
-              _buildTextField(controller: _nameController, labelText: 'Name'),
-              _buildTextField(
+              buildTextField(controller: _nameController, labelText: 'Name'),
+              buildTextField(
                   controller: _urlController, labelText: 'Custom URL'),
-              _buildTextField(
+              buildTextField(
                 controller: _aboutMeController,
                 labelText: 'About Me',
-                isMultiline: true,
-                maxLength: 50,
+                maxLines: 5,
               ),
               ..._socialMediaControllers.asMap().entries.map((entry) {
-                return _buildSocialMediaField(entry.key);
+                return SocialMediaField(
+                  controller: entry.value,
+                  onRemove: () {
+                    setState(() {
+                      _socialMediaControllers.removeAt(entry.key);
+                    });
+                  },
+                );
               }).toList(),
-              TextButton(
-                onPressed: () {
+              CustomTextButton(
+                text: 'Add Social Media Link',
+                onTap: () {
                   setState(() {
                     _socialMediaControllers.add(TextEditingController());
                   });
                 },
-                child: Text('Add Social Media Link'),
               ),
               ..._projectControllers.asMap().entries.map((entry) {
-                return _buildProjectField(entry.key);
+                return ProjectField(
+                  titleController: entry.value['title']!,
+                  descriptionController: entry.value['description']!,
+                  urlController: entry.value['url']!,
+                  onRemove: () {
+                    setState(() {
+                      _projectControllers.removeAt(entry.key);
+                    });
+                  },
+                );
               }).toList(),
-              TextButton(
-                onPressed: () {
+              CustomTextButton(
+                text: 'Add Project',
+                onTap: () {
                   setState(() {
                     _projectControllers.add({
                       'title': TextEditingController(),
@@ -211,15 +170,13 @@ class _UserInfoPageState extends State<UserInfoPage> {
                     });
                   });
                 },
-                child: Text('Add Project'),
               ),
               SizedBox(height: 20),
-              _isLoading
-                  ? CupertinoActivityIndicator()
-                  : ElevatedButton(
-                      onPressed: _submitData,
-                      child: Text('Submit'),
-                    ),
+              CustomButton(
+                isLoading: _isLoading,
+                text: 'Submit',
+                onTap: _submitData,
+              )
             ],
           ),
         ),

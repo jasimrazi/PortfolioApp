@@ -24,23 +24,21 @@ class CustomButton extends StatelessWidget {
           color: Colors.black, // Set your desired color here
           borderRadius: BorderRadius.circular(15),
         ),
-        child: isLoading
-            ? Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  CupertinoActivityIndicator(),
-                  SizedBox(width: 10),
-                ],
-              )
-            : Center(
-                child: Text(
-                  text,
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            if (isLoading) CupertinoActivityIndicator(color: Colors.white),
+            if (!isLoading)
+              Text(
+                text,
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
+          ],
+        ),
       ),
     );
   }
