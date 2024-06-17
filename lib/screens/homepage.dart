@@ -1,11 +1,12 @@
-import 'dart:io';
+// home_page.dart
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:portfolioapp/screens/userinfo.dart';
-import 'package:portfolioapp/widgets/custom_appbar.dart';
+import 'package:portfolioapp/widgets/appbar.dart';
 import 'package:portfolioapp/widgets/section_container.dart';
+import 'package:portfolioapp/widgets/social_media_icons.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -47,10 +48,16 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  void _logout() async {
+    await _auth.signOut();
+    Navigator.of(context).pushReplacementNamed(
+        '/login'); // Adjust the route to your login screen
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(title: 'My Portfolio'),
+      appBar: CustomAppBar(title: 'My Portfolio', onLogout: _logout),
       body: _isLoading
           ? Center(child: CupertinoActivityIndicator())
           : _userData == null
@@ -69,29 +76,37 @@ class _HomePageState extends State<HomePage> {
                               : null,
                         ),
                         SizedBox(height: 20),
-                        SectionContainer(
-                          title: 'Personal Information',
-                          icon: Icons.info_outline,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('Name: ${_userData!['name']}'),
-                              SizedBox(height: 10),
-                              Text('Custom URL: ${_userData!['custom_url']}'),
-                              SizedBox(height: 10),
-                              Text('About Me: ${_userData!['about_me']}'),
-                            ],
-                          ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              '${_userData!['name']}',
+                              style: TextStyle(
+                                  fontSize: 40, fontWeight: FontWeight.w600),
+                            ),
+                            SizedBox(height: 10),
+                            Text('Custom URL: ${_userData!['custom_url']}'),
+                            SizedBox(height: 10),
+                            SectionContainer(
+                              title: 'About me',
+                              child: Text(
+                                '${_userData!['about_me']}',
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w100,
+                                    color: Colors.grey.shade600),
+                              ),
+                            ),
+                          ],
                         ),
-                        SectionContainer(
-                          title: 'Social Media',
-                          icon: Icons.public_outlined,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: _userData!['social_media']
-                                .map<Widget>((link) => Text(link))
-                                .toList(),
-                          ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: _userData!['social_media']
+                              .map<Widget>((link) => Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: SocialMediaIconWidget(url: link),
+                                  ))
+                              .toList(),
                         ),
                         SectionContainer(
                           title: 'Projects',

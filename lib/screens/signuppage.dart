@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:portfolioapp/services/auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:portfolioapp/widgets/custom_appbar.dart';
-import 'package:portfolioapp/widgets/custom_button.dart';
+import 'package:portfolioapp/widgets/appbar.dart';
+import 'package:portfolioapp/widgets/button.dart';
 import 'package:portfolioapp/widgets/normal_textfield.dart';
 
 class SignUpPage extends StatefulWidget {

@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:portfolioapp/services/auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:portfolioapp/widgets/custom_appbar.dart';
-import 'package:portfolioapp/widgets/custom_button.dart';
-import 'package:portfolioapp/widgets/custom_textbutton.dart';
+import 'package:portfolioapp/widgets/appbar.dart';
+import 'package:portfolioapp/widgets/button.dart';
+import 'package:portfolioapp/widgets/textbutton.dart';
 import 'package:portfolioapp/widgets/normal_textfield.dart';
 
 class LoginPage extends StatefulWidget {
@@ -33,7 +33,12 @@ class _LoginPageState extends State<LoginPage> {
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to sign in: $e')),
+        SnackBar(
+          content: Text('Failed to sign in: $e'),
+          backgroundColor: Colors.red,
+          clipBehavior: Clip.none,
+          duration: Duration(seconds: 3),
+        ),
       );
     } finally {
       setState(() {
@@ -68,7 +73,9 @@ class _LoginPageState extends State<LoginPage> {
               onTap: _login,
             ),
             SizedBox(height: 20),
-            CustomTextButton(text: 'Don\'t have an account? Sign Up', onTap: () {
+            CustomTextButton(
+              text: 'Don\'t have an account? Sign Up',
+              onTap: () {
                 Navigator.pushNamed(context, '/signup');
               },
             )
