@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:portfolioapp/screens/userinfo.dart';
 import 'package:portfolioapp/widgets/appbar.dart';
+import 'package:portfolioapp/widgets/projects_only.dart';
 import 'package:portfolioapp/widgets/section_container.dart';
 import 'package:portfolioapp/widgets/social_media_icons.dart';
 
@@ -94,7 +95,7 @@ class _HomePageState extends State<HomePage> {
                                 style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w100,
-                                    color: Colors.grey.shade600),
+                                    color: Colors.blueGrey),
                               ),
                             ),
                           ],
@@ -112,21 +113,10 @@ class _HomePageState extends State<HomePage> {
                           title: 'Projects',
                           icon: Icons.work_outline,
                           child: Column(
-                            children:
-                                _userData!['projects'].map<Widget>((project) {
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text('Title: ${project['title']}'),
-                                  SizedBox(height: 5),
-                                  Text(
-                                      'Description: ${project['description']}'),
-                                  SizedBox(height: 5),
-                                  Text('URL: ${project['url']}'),
-                                  Divider(color: Colors.grey.shade200),
-                                ],
-                              );
-                            }).toList(),
+                            children: _userData!['projects']
+                                .map<Widget>((project) =>
+                                    ProjectWidget(project: project))
+                                .toList(),
                           ),
                         ),
                       ],
