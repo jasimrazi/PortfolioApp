@@ -12,7 +12,7 @@ Widget buildNormalTextField({
     decoration: BoxDecoration(
       color: Colors.white,
       borderRadius: BorderRadius.circular(15.0),
-      border: Border.all(color: Colors.grey),
+      border: Border.all(color: Colors.grey.shade200),
     ),
     child: TextField(
       cursorColor: Colors.grey,

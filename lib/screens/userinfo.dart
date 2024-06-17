@@ -22,21 +22,63 @@ class _UserInfoPageState extends State<UserInfoPage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _urlController = TextEditingController();
   final TextEditingController _aboutMeController = TextEditingController();
-  final List<TextEditingController> _socialMediaControllers = [
-    TextEditingController()
-  ];
-  final List<Map<String, TextEditingController>> _projectControllers = [
-    {
-      'title': TextEditingController(),
-      'description': TextEditingController(),
-      'url': TextEditingController()
-    }
-  ];
+  final List<TextEditingController> _socialMediaControllers = [];
+  final List<Map<String, TextEditingController>> _projectControllers = [];
 
   bool _isLoading = false;
+  bool _isDataLoading = true;
   XFile? _profileImage;
 
   final ImagePicker _picker = ImagePicker();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  User? _currentUser;
+  Map<String, dynamic>? _userData;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentUser = _auth.currentUser;
+    if (_currentUser != null) {
+      _fetchUserData();
+    } else {
+      setState(() {
+        _isDataLoading = false;
+      });
+    }
+  }
+
+  Future<void> _fetchUserData() async {
+    try {
+      final doc = await FirebaseFirestore.instance
+          .collection('userdata')
+          .doc(_currentUser!.uid)
+          .get();
+      if (doc.exists) {
+        _userData = doc.data();
+        _nameController.text = _userData!['name'] ?? '';
+        _urlController.text = _userData!['custom_url'] ?? '';
+        _aboutMeController.text = _userData!['about_me'] ?? '';
+        _userData!['social_media']?.forEach((link) {
+          _socialMediaControllers.add(TextEditingController(text: link));
+        });
+        _userData!['projects']?.forEach((project) {
+          _projectControllers.add({
+            'title': TextEditingController(text: project['title']),
+            'description': TextEditingController(text: project['description']),
+            'url': TextEditingController(text: project['url']),
+          });
+        });
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to load user data: $e')),
+      );
+    } finally {
+      setState(() {
+        _isDataLoading = false;
+      });
+    }
+  }
 
   Future<void> _pickImage() async {
     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
@@ -103,123 +145,132 @@ class _UserInfoPageState extends State<UserInfoPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(title: 'Complete your profile'),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
-          physics: BouncingScrollPhysics(),
-          child: Column(
-            children: [
-              GestureDetector(
-                onTap: _pickImage,
-                child: CircleAvatar(
-                  backgroundColor: Colors.grey.shade400,
-                  radius: 50,
-                  backgroundImage: _profileImage != null
-                      ? FileImage(File(_profileImage!.path))
-                      : null,
-                  child: _profileImage == null
-                      ? Icon(Icons.add_a_photo, size: 50, color: Colors.white)
-                      : null,
-                ),
-              ),
-              SizedBox(height: 20),
-              SectionContainer(
-                title: 'Personal Information',
-                icon: Icons.info_outline,
+      body: _isDataLoading
+          ? Center(child: CupertinoActivityIndicator())
+          : Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: SingleChildScrollView(
+                physics: BouncingScrollPhysics(),
                 child: Column(
                   children: [
-                    buildTextField(
-                        controller: _nameController, labelText: 'Name'),
-                    buildTextField(
-                        controller: _urlController, labelText: 'Custom URL'),
-                    buildTextField(
-                      controller: _aboutMeController,
-                      labelText: 'About Me',
-                      maxLines: 5,
+                    GestureDetector(
+                      onTap: _pickImage,
+                      child: CircleAvatar(
+                        backgroundColor: Colors.grey.shade400,
+                        radius: 50,
+                        backgroundImage: _profileImage != null
+                            ? FileImage(File(_profileImage!.path))
+                            : null,
+                        child: _profileImage == null
+                            ? Icon(Icons.add_a_photo,
+                                size: 50, color: Colors.white)
+                            : null,
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    SectionContainer(
+                      title: 'Personal Information',
+                      icon: Icons.info_outline,
+                      child: Column(
+                        children: [
+                          buildTextField(
+                              controller: _nameController, labelText: 'Name'),
+                          buildTextField(
+                              controller: _urlController,
+                              labelText: 'Custom URL'),
+                          buildTextField(
+                            controller: _aboutMeController,
+                            labelText: 'About Me',
+                            maxLines: 5,
+                          ),
+                        ],
+                      ),
+                    ),
+                    SectionContainer(
+                      title: 'Social Media',
+                      icon: Icons.public_outlined,
+                      child: Column(
+                        children: [
+                          ..._socialMediaControllers
+                              .asMap()
+                              .entries
+                              .map((entry) {
+                            return SocialMediaField(
+                              controller: entry.value,
+                              onRemove: () {
+                                setState(() {
+                                  _socialMediaControllers.removeAt(entry.key);
+                                });
+                              },
+                            );
+                          }).toList(),
+                          Divider(
+                            indent: 10,
+                            endIndent: 10,
+                            color: Colors.grey.shade200,
+                          ),
+                          CustomTextButton(
+                            text: 'Add Social Media Link',
+                            icon: Icons.add_circle_outline,
+                            onTap: () {
+                              setState(() {
+                                _socialMediaControllers
+                                    .add(TextEditingController());
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                    SectionContainer(
+                      title: 'Projects',
+                      icon: Icons.work_outline,
+                      child: Column(
+                        children: [
+                          ..._projectControllers.asMap().entries.map((entry) {
+                            return ProjectField(
+                              titleController: entry.value['title']!,
+                              descriptionController:
+                                  entry.value['description']!,
+                              urlController: entry.value['url']!,
+                              onRemove: () {
+                                setState(() {
+                                  _projectControllers.removeAt(entry.key);
+                                });
+                              },
+                            );
+                          }).toList(),
+                          Divider(
+                            indent: 10,
+                            endIndent: 10,
+                            color: Colors.grey.shade200,
+                          ),
+                          CustomTextButton(
+                            text: 'Add Project',
+                            icon: Icons.add_circle_outline,
+                            onTap: () {
+                              setState(() {
+                                _projectControllers.add({
+                                  'title': TextEditingController(),
+                                  'description': TextEditingController(),
+                                  'url': TextEditingController(),
+                                });
+                              });
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    CustomButton(
+                      isLoading: _isLoading,
+                      text: _currentUser != null ? 'Save changes' : 'Submit',
+                      onTap: _submitData,
                     ),
                   ],
                 ),
               ),
-              SectionContainer(
-                title: 'Social Media',
-                icon: Icons.public_outlined,
-                child: Column(
-                  children: [
-                    ..._socialMediaControllers.asMap().entries.map((entry) {
-                      return SocialMediaField(
-                        controller: entry.value,
-                        onRemove: () {
-                          setState(() {
-                            _socialMediaControllers.removeAt(entry.key);
-                          });
-                        },
-                      );
-                    }).toList(),
-                    Divider(
-                      indent: 10,
-                      endIndent: 10,
-                      color: Colors.grey.shade200,
-                    ),
-                    CustomTextButton(
-                      text: 'Add Social Media Link',
-                      icon: Icons.add_circle_outline,
-                      onTap: () {
-                        setState(() {
-                          _socialMediaControllers.add(TextEditingController());
-                        });
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              SectionContainer(
-                title: 'Projects',
-                icon: Icons.work_outline,
-                child: Column(
-                  children: [
-                    ..._projectControllers.asMap().entries.map((entry) {
-                      return ProjectField(
-                        titleController: entry.value['title']!,
-                        descriptionController: entry.value['description']!,
-                        urlController: entry.value['url']!,
-                        onRemove: () {
-                          setState(() {
-                            _projectControllers.removeAt(entry.key);
-                          });
-                        },
-                      );
-                    }).toList(),
-                    Divider(
-                      indent: 10,
-                      endIndent: 10,
-                      color: Colors.grey.shade200,
-                    ),
-                    CustomTextButton(
-                      text: 'Add Project',
-                      icon: Icons.add_circle_outline,
-                      onTap: () {
-                        setState(() {
-                          _projectControllers.add({
-                            'title': TextEditingController(),
-                            'description': TextEditingController(),
-                            'url': TextEditingController(),
-                          });
-                        });
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 20),
-              CustomButton(
-                isLoading: _isLoading,
-                text: 'Submit',
-                onTap: _submitData,
-              ),
-            ],
-          ),
-        ),
-      ),
+            ),
     );
   }
 }
