@@ -89,10 +89,31 @@ class _UserInfoPageState extends State<UserInfoPage> {
     }
   }
 
+  bool _isValidCustomUrl(String url) {
+    final regex = RegExp(r'^[a-zA-Z0-9]+$');
+    return regex.hasMatch(url);
+  }
+
+  Future<bool> _isUniqueCustomUrl(String url) async {
+    final querySnapshot = await FirebaseFirestore.instance
+        .collection('userdata')
+        .where('custom_url', isEqualTo: url)
+        .get();
+    return querySnapshot.docs.isEmpty;
+  }
+
   Future<void> _submitData() async {
     if (_nameController.text.isEmpty || _urlController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Name and Custom URL are required')),
+      );
+      return;
+    }
+
+    if (!_isValidCustomUrl(_urlController.text)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text('Custom URL should not contain special characters')),
       );
       return;
     }
@@ -102,6 +123,17 @@ class _UserInfoPageState extends State<UserInfoPage> {
     });
 
     try {
+      final isUnique = await _isUniqueCustomUrl(_urlController.text);
+      if (!isUnique) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Custom URL is already taken')),
+        );
+        setState(() {
+          _isLoading = false;
+        });
+        return;
+      }
+
       final user = FirebaseAuth.instance.currentUser;
       if (user != null) {
         final data = {
@@ -264,7 +296,7 @@ class _UserInfoPageState extends State<UserInfoPage> {
                     SizedBox(height: 20),
                     CustomButton(
                       isLoading: _isLoading,
-                      text: _currentUser != null ? 'Save changes' : 'Submit',
+                      text: 'Submit',
                       onTap: _submitData,
                     ),
                   ],
