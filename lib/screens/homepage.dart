@@ -109,16 +109,18 @@ class _HomePageState extends State<HomePage> {
                                   ))
                               .toList(),
                         ),
-                        SectionContainer(
-                          title: 'Projects',
-                          icon: Icons.work_outline,
-                          child: Column(
-                            children: _userData!['projects']
-                                .map<Widget>((project) =>
-                                    ProjectWidget(project: project))
-                                .toList(),
+                        if (_userData!['projects'] != null &&
+                            _userData!['projects'].isNotEmpty)
+                          SectionContainer(
+                            title: 'Projects',
+                            icon: Icons.work_outline,
+                            child: Column(
+                              children: _userData!['projects']
+                                  .map<Widget>((project) =>
+                                      ProjectWidget(project: project))
+                                  .toList(),
+                            ),
                           ),
-                        ),
                       ],
                     ),
                   ),
