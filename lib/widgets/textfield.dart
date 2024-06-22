@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 Widget buildTextField({
   required TextEditingController controller,
   required String labelText,
-  bool obscureText = false,
   int maxLines = 1,
   Widget? suffixIcon,
   VoidCallback? onPressed,
+  bool isObscure = false, // Added the isObscure parameter here
 }) {
   return Container(
     margin: EdgeInsets.symmetric(vertical: 5),
@@ -18,8 +18,8 @@ Widget buildTextField({
     child: TextField(
       cursorColor: Colors.grey,
       controller: controller,
-      obscureText: obscureText,
       maxLines: maxLines,
+      obscureText: isObscure, // Used isObscure here
       decoration: InputDecoration(
         hintText: labelText,
         suffixIcon: suffixIcon,

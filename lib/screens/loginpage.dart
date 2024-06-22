@@ -6,6 +6,12 @@ import 'package:portfolioapp/widgets/button.dart';
 import 'package:portfolioapp/widgets/textbutton.dart';
 import 'package:portfolioapp/widgets/normal_textfield.dart';
 
+enum Status {
+  loading,
+  done,
+  end,
+}
+
 class LoginPage extends StatefulWidget {
   @override
   _LoginPageState createState() => _LoginPageState();
@@ -16,6 +22,8 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _passwordController = TextEditingController();
   final AuthService _authService = AuthService();
   final _formKey = GlobalKey<FormState>();
+
+  Status status = Status.end;
 
   bool _isLoading = false;
   String? _emailError;
@@ -35,6 +43,8 @@ class _LoginPageState extends State<LoginPage> {
     }
 
     setState(() {
+      status = Status.loading;
+
       _isLoading = true;
     });
 
@@ -56,6 +66,7 @@ class _LoginPageState extends State<LoginPage> {
       );
     } finally {
       setState(() {
+        status = Status.done;
         _isLoading = false;
       });
     }

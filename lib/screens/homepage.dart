@@ -1,8 +1,8 @@
-// home_page.dart
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:portfolioapp/screens/profilepage.dart';
 import 'package:portfolioapp/screens/userinfo.dart';
 import 'package:portfolioapp/widgets/appbar.dart';
 import 'package:portfolioapp/widgets/projects_only.dart';
@@ -55,10 +55,20 @@ class _HomePageState extends State<HomePage> {
         '/login'); // Adjust the route to your login screen
   }
 
+  void _navigateToUserDetails() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => ProfilePage()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(title: 'My Portfolio', onLogout: _logout),
+      appBar: CustomAppBar(
+        title: 'My Portfolio',
+        onUserIconPressed: _navigateToUserDetails,
+      ),
       body: _isLoading
           ? Center(child: CupertinoActivityIndicator())
           : _userData == null

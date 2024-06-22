@@ -5,12 +5,14 @@ class CustomButton extends StatelessWidget {
   final bool isLoading;
   final String text;
   final VoidCallback? onTap;
+  final Color color; // Add this line
 
   const CustomButton({
     Key? key,
     required this.isLoading,
     required this.text,
     this.onTap,
+    this.color = Colors.black, // Add this line
   }) : super(key: key);
 
   @override
@@ -21,7 +23,7 @@ class CustomButton extends StatelessWidget {
         width: double.infinity,
         padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 24.0),
         decoration: BoxDecoration(
-          color: Colors.black, // Set your desired color here
+          color: color, // Modify this line
           borderRadius: BorderRadius.circular(15),
         ),
         child: Stack(
